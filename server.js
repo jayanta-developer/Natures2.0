@@ -1,9 +1,10 @@
 //Start the the server..
-const mongoose = require('mongoose');
 const dotenv = require('dotenv');
+const mongoose = require('mongoose');
+
 dotenv.config({ path: './config.env' });
 const app = require('./app');
-const port = 2000;
+
 
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
@@ -11,7 +12,7 @@ const DB = process.env.DATABASE.replace(
 );
 
 mongoose
-  .connect(DB, {
+.connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
@@ -19,8 +20,9 @@ mongoose
   })
   .then(() => console.log('Database is connected successfully!'));
 
+  const port = process.env.PORT || 2000;
 app.listen(port, () => {
   console.log(`App running on port ${port}...`);
 });
 
-// console.log(process.env);
+
