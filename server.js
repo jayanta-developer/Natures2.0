@@ -1,9 +1,8 @@
-//Start the the server..
+//Start the server..
 const dotenv = require('dotenv');
-const mongoose = require('mongoose');
-
 dotenv.config({ path: './config.env' });
 const app = require('./app');
+const mongoose = require('mongoose');
 
 
 const DB = process.env.DATABASE.replace(
@@ -12,7 +11,7 @@ const DB = process.env.DATABASE.replace(
 );
 
 mongoose
-.connect(DB, {
+  .connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useFindAndModify: false,
@@ -20,10 +19,8 @@ mongoose
   })
   .then(() => console.log('Database is connected successfully!'));
 
-  //Run the server in port 2000
-  const port = process.env.PORT || 2000;
+//Run the server in port 2000
+const port = process.env.PORT || 3002;
 app.listen(port, () => {
   console.log(`App running on port ${port}...`);
 });
-
-

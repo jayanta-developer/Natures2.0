@@ -16,7 +16,7 @@ mongoose
     useCreateIndex: true,
     useFindAndModify: false,
   })
-  .then(() => console.log('Database coacted successful!'));
+  .then(() => console.log('Database conacted successful!'));
 
 //read json file
 const tours = JSON.parse(

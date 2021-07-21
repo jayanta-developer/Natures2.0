@@ -2,17 +2,64 @@ const fs = require('fs');
 const Tour = require('./../Models/TourModels');
 const APIFeatures = require('./../Utils/apiFeatures');
 const catchAsync = require('./../Utils/catchAsync');
-const AppError = require('./../Utils/appError')
+const AppError = require('./../Utils/appError');
 
 //Tour handler.
+
 exports.getAllTours = catchAsync(async (req, res, next) => {
+  const queryObj = { ...req.query };
+  const excludedFields = ['page', 'sort', 'limit', 'fields'];
+  excludedFields.forEach((el) => delete queryObj[el]);
+
+  //Advanded filtering
+  let queryStr = JSON.stringify(queryObj);
+  queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, match => `$${match}`);
+  console.log(JSON.parse(queryStr));
+  let query = Tour.find(JSON.parse(queryStr));
+
+  if(req.query.sort){
+    const sortBy = req.query.sort.split(',').join(' ');
+    query = query.sort(sortBy)
+  } else{
+    query = query.sort('-createdAt')
+  }
+
+  if(req.query.fields){
+    const fields = req.query.fields.split(',').join(' ');
+    query = query.select(fields);
+  }else{
+    query = query.select('-__v')
+  }
+
+
+//Pagination
+const page = req.query.page * 1 || 1;
+// console.log(page)
+
+const limit = req.query.limit * 1 || 10;
+console.log(limit)
+
+const skip = (page - 1) * limit; 
+console.log('skip',skip)
+
+query = query.skip(skip).limit(limit)
+
+if(req.query.page){
+  const docNum = await Tour.countDocuments();
+  if(skip >= docNum) throw new Error('This page is not exist!')
+}
+
+
+
+
   //Execute query
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-  const tours = await features.query;
+  const tours = await query;
+  // const features = new APIFeatures(Tour.find(), req.query)
+  //   .filter()
+  //   .sort()
+  //   .limitFields()
+  //   .paginate();
+  // const tours = await features.query;
 
   res.status(200).json({
     status: 'success',
@@ -26,7 +73,9 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 exports.getTourById = catchAsync(async (req, res, next) => {
   const tour = await Tour.findById(req.params.id);
   if (!tour) {
-    return next(new AppError(`No tour found with that ID ${req.params.id}`, 404));
+    return next(
+      new AppError(`No tour found with that ID ${req.params.id}`, 404)
+    );
   }
 
   res.status(200).json({
@@ -59,9 +108,11 @@ exports.updateTour = catchAsync(async (req, res, next) => {
 
 exports.deleteTour = catchAsync(async (req, res, next) => {
   const tour = await Tour.findByIdAndDelete(req.params.id);
-  
-  if(!tour){
-    return next(new AppError(`No tour found with that ID ${req.params.id}`, 404));
+
+  if (!tour) {
+    return next(
+      new AppError(`No tour found with that ID ${req.params.id}`, 404)
+    );
   }
 
   res.status(204).json({
