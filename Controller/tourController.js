@@ -7,7 +7,7 @@ const AppError = require('./../Utils/appError');
 //Tour handler.
 
 exports.getAllTours = catchAsync(async (req, res, next) => {
-  //Execute query  
+  //Execute query
   const features = new APIFeatures(Tour.find(), req.query)
     .filter()
     .sort()
@@ -91,6 +91,8 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
         maxPrice: { $max: '$price' },
       },
     },
+    { $project: { numRatings: 0 } },
+    
     {
       $sort: { avgPrice: 1 },
     },
