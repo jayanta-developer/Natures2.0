@@ -75,6 +75,7 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
   });
 });
 
+//Aggregate
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
     {
@@ -92,7 +93,7 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
       },
     },
     { $project: { numRatings: 0 } },
-    
+
     {
       $sort: { avgPrice: 1 },
     },
