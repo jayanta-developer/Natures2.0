@@ -5,7 +5,7 @@ const catchAsync = require('./../Utils/catchAsync');
 const AppError = require('./../Utils/appError');
 
 //Tour handler.
-
+//Make catchAsync fun for handle error in one function.
 exports.getAllTours = catchAsync(async (req, res, next) => {
   //Execute query
   const features = new APIFeatures(Tour.find(), req.query)
@@ -76,6 +76,7 @@ exports.deleteTour = catchAsync(async (req, res, next) => {
 });
 
 //Aggregate
+//for Grouping file
 exports.getTourStats = catchAsync(async (req, res, next) => {
   const stats = await Tour.aggregate([
     {
