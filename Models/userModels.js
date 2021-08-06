@@ -28,20 +28,17 @@ const userSchema = new mongoose.Schema({
       validator: function (pwc) {
         return pwc === this.password;
       },
-      message: 'Password is not match'
+      message: 'Password is not match',
     },
   },
   photo: String,
 });
 
-userSchema.pre('save', async function(next){
-if(!this.isModified('password')) return next();
-
-this.password = await bcrypt.hash(this.password, 12);
-
-this.passwordConfarmation = undefined;
-})
-
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfarmation = undefined;
+});
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;
