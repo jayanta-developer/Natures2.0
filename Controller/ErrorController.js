@@ -5,20 +5,20 @@ const handleCastErrorDB = (err) => {
   return new AppError(message, 400);
 };
 const handleDuplicateFieldsDB = (err) => {
-  const message = ` Duplicate field value:(${err.keyValue.name}) Plese use another value`;
+  const message = `Duplicate field value:(${err.keyValue.name}) Plese use another value`;
   return new AppError(message, 400);
 };
-//Moongose validation Err
+// Moongose validation Err
 const handleValidationError = (err) => {
   const error = Object.values(err.errors).map((el) => el.message);
   const message = `Invalid input data. ${error.join('. ')}`;
   return new AppError(message, 400);
 };
 
-//JWT Errors
-const  hendleJWTerror=err=>{
-  return new AppError(`Inbalade token error: ${err.name}`, 401)
-}
+// JWT Errors
+const hendleJWTerror = (err) => {
+  return new AppError(`Inbalade token error: ${err.name}`, 401);
+};
 
 //For Development Err
 const sendErrDev = (err, res) => {
@@ -52,16 +52,18 @@ module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
   err.status = err.status || 'error';
 
-  if (process.env.NODE_ENV === 'development') {    
+  if (process.env.NODE_ENV === 'development') {
     sendErrDev(err, res);
-  }
-  else if (process.env.NODE_ENV === 'production') {
-     if(err.name === "JsonWebTokenError") err = hendleJWTerror(err);
-    let error = { ...err };    
+  } else if (process.env.NODE_ENV === 'production') {
+    let error = { ...err };
     if (error.kind === 'ObjectId') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
-    if (error._message === 'Validation failed' || 'Tour validation failed') error = handleValidationError(error);
-
+    if (
+      error._message === 'Validation failed' ||
+      error.message === 'Tour validation failed'
+    )
+      error = handleValidationError(error);
+    if (error.name === 'JsonWebTokenError') err = hendleJWTerror(err);
 
     sendErrPrd(error, res);
   }

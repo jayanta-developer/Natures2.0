@@ -22,9 +22,6 @@ exports.getAllUsers = (req, res) => {
 exports.signup = catchAsync(async (req, res) => {
   const { name, email, password, passwordConfarmation } = req.body;
   const user = await User.create({ name, email, password, passwordConfarmation });
-  console.log('this is password',password)
-  console.log('this is passwordconfirmation',req.passwordConfarmation)
-  
 
   const token = signToken(user._id);
   res.status(201).json({

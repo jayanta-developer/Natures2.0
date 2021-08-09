@@ -11,9 +11,9 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'A user must have a email'],
+    validate: [validator.isEmail, 'Please provide a valide email'],
     unique: true,
     lowercase: true,
-    validate: [validator.isEmail, 'Please provide a valide email'],
   },
   password: {
     type: String,
@@ -27,7 +27,6 @@ const userSchema = new mongoose.Schema({
     //This validation fun only work with save mathode!
     validate: {
       validator: function (pwc) {
-        console.log('Password', pwc);
         return this.password === pwc;
       },
       message: 'Password is not match',
