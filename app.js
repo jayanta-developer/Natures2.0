@@ -17,6 +17,11 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
+//Middelwer
+app.use((req, res, next)=>{
+  next()
+})
+
 //Define the routers
 const TourRouter = require('./Routs/tourRouts');
 const UserRouter = require('./Routs/userRouts');

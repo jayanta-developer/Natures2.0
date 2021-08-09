@@ -1,4 +1,5 @@
 //User handler..
+const { promisify } = require('util');
 const User = require('../Models/userModels');
 const AppError = require('../Utils/appError');
 const catchAsync = require('../Utils/catchAsync');
@@ -19,8 +20,11 @@ exports.getAllUsers = (req, res) => {
 };
 //Create User
 exports.signup = catchAsync(async (req, res) => {
-  const { name, email, password } = req.body;
-  const user = await User.create({ name, email, password });
+  const { name, email, password, passwordConfarmation } = req.body;
+  const user = await User.create({ name, email, password, passwordConfarmation });
+  console.log('this is password',password)
+  console.log('this is passwordconfirmation',req.passwordConfarmation)
+  
 
   const token = signToken(user._id);
   res.status(201).json({
@@ -70,3 +74,30 @@ exports.deleteUser = (req, res) => {
     message: 'This rout is not yet defined',
   });
 };
+
+exports.protectRoute = catchAsync(async (req, res, next) => {
+  //1)check for token is exiset
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  }
+  if (!token) {
+    return next(
+      new AppError('Your are not logged in! please login to get access', 401)
+    );
+  }
+  //2)verify token
+  const decoded = await promisify(jwt.verify)(
+    token,
+    process.env.JWT_SECRET_TOKEN
+  );
+  console.log(decoded)
+  //3)check user still exists
+
+  //4)check user change password before asine token
+
+  next();
+});

@@ -5,29 +5,30 @@ const bcrypt = require('bcryptjs');
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    require: [true, 'A user must have a name'],
+    required: [true, 'A user must have a name'],
     unique: true,
   },
   email: {
     type: String,
-    require: [true, 'A user must have a email'],
+    required: [true, 'A user must have a email'],
     unique: true,
     lowercase: true,
     validate: [validator.isEmail, 'Please provide a valide email'],
   },
   password: {
     type: String,
-    require: [true, 'A user must have a password'],
+    required: [true, 'A user must have a password'],
     minlength: 8,
-    select: false,
+    select: true,
   },
   passwordConfarmation: {
     type: String,
-    require: [true, 'Plese input password confarmation'],
+    required: [true, 'Plese input password confarmation'],
     //This validation fun only work with save mathode!
     validate: {
       validator: function (pwc) {
-        return pwc === this.password;
+        console.log('Password', pwc);
+        return this.password === pwc;
       },
       message: 'Password is not match',
     },
@@ -38,7 +39,7 @@ const userSchema = new mongoose.Schema({
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
-  this.passwordConfarmation = undefined;
+
 });
 
 userSchema.methods.correctPassword = async function (
