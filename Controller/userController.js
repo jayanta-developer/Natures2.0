@@ -102,10 +102,23 @@ exports.protectRoute = catchAsync(async (req, res, next) => {
     );
   }
   //4)check user change password before asine token
-  if(await currentUser.AfterchangesPassword(decoded.iat)){
-    return next(new AppError('user recently changed password! Please log in again.',401))
+  if (await currentUser.AfterchangesPassword(decoded.iat)) {
+    return next(
+      new AppError('user recently changed password! Please log in again.', 401)
+    );
   }
-
   req.user = currentUser;
   next();
 });
+
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError('You do not have permission to perform this action!', 403)
+      );
+    }
+
+    next();
+  };
+};

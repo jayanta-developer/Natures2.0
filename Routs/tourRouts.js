@@ -10,15 +10,15 @@ const router = express.Router();
 router
   .route('/')
   .get(userController.protectRoute, tourController.getAllTours)
-  .post(tourController.creatTour);
+  .post(userController.protectRoute, userController.restrictTo('admin', 'lead-guide'), tourController.creatTour);
 
-router.route('/tour-stats').get(tourController.getTourStats);
-router.route('/monthly-plan/:year').get(tourController.getMonthlyPlan);
+router.route('/tour-stats').get(userController.protectRoute, userController.restrictTo('admin', 'lead-guide'), tourController.getTourStats);
+router.route('/monthly-plan/:year').get(userController.protectRoute, userController.restrictTo('admin', 'lead-guide'), tourController.getMonthlyPlan);
 
 router
   .route('/:id')
-  .get(tourController.getTourById)
-  .patch(tourController.updateTour)
-  .delete(tourController.deleteTour);
+  .get(userController.protectRoute, tourController.getTourById)
+  .patch(userController.protectRoute, userController.restrictTo('admin', 'lead-guide'), tourController.updateTour)
+  .delete(userController.protectRoute, userController.restrictTo('admin', 'lead-guide'), tourController.deleteTour);
 
 module.exports = router;

@@ -33,8 +33,16 @@ const userSchema = new mongoose.Schema({
     },
   },
   photo: String,
-
   passwordChangedAt: Date,
+
+  role: {
+    type: String,
+    default: 'user',
+    enum: {
+      values: ['user', 'guide', 'admin', 'lead-guide'],
+      message: 'A user role must be in betwen (user, guide, lead-guide, admin)'
+    } 
+  }
 });
 
 userSchema.pre('save', async function (next) {
