@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, 'A user must have a password'],
     minlength: 8,
-    select: true,
+    select: false,
   },
   passwordConfarmation: {
     type: String,
@@ -33,12 +33,13 @@ const userSchema = new mongoose.Schema({
     },
   },
   photo: String,
+
+  passwordChangedAt: Date,
 });
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
-
 });
 
 userSchema.methods.correctPassword = async function (
@@ -46,6 +47,15 @@ userSchema.methods.correctPassword = async function (
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
+  //   this.passwordConfarmation = undefined;
+};
+
+userSchema.methods.AfterchangesPassword = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changeTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+    return JWTTimestamp < changeTimeStamp;
+  }
+  return false;
 };
 
 const User = mongoose.model('User', userSchema);

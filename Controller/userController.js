@@ -20,8 +20,8 @@ exports.getAllUsers = (req, res) => {
 };
 //Create User
 exports.signup = catchAsync(async (req, res) => {
-  const { name, email, password, passwordConfarmation } = req.body;
-  const user = await User.create({ name, email, password, passwordConfarmation });
+  // const { name, email, password, passwordConfarmation } = req.body;
+  const user = await User.create(req.body);
 
   const token = signToken(user._id);
   res.status(201).json({
@@ -91,10 +91,21 @@ exports.protectRoute = catchAsync(async (req, res, next) => {
     token,
     process.env.JWT_SECRET_TOKEN
   );
-  console.log(decoded)
   //3)check user still exists
-
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
+    return next(
+      new AppError(
+        'The user belonging to this token does no longer exist.',
+        401
+      )
+    );
+  }
   //4)check user change password before asine token
+  if(await currentUser.AfterchangesPassword(decoded.iat)){
+    return next(new AppError('user recently changed password! Please log in again.',401))
+  }
 
+  req.user = currentUser;
   next();
 });

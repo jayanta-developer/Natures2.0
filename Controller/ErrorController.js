@@ -5,9 +5,12 @@ const handleCastErrorDB = (err) => {
   return new AppError(message, 400);
 };
 const handleDuplicateFieldsDB = (err) => {
-  const message = `Duplicate field value:(${err.keyValue.name}) Plese use another value`;
+  let val;
+  err.keyValue.name ? (val = err.keyValue.name) : (val = err.keyValue.email);
+  const message = `Duplicate field value:(${val}) Plese use another value`;
   return new AppError(message, 400);
 };
+
 // Moongose validation Err
 const handleValidationError = (err) => {
   const error = Object.values(err.errors).map((el) => el.message);
@@ -16,11 +19,15 @@ const handleValidationError = (err) => {
 };
 
 // JWT Errors
-const hendleJWTerror = (err) => {
-  return new AppError(`Inbalade token error: ${err.name}`, 401);
-};
+const hendleJWTerror = (err) =>
+  new AppError(`Inbalade token error: ${err.name}. Please login again!`, 401);
+const hendleJWTexpiredError = (err) =>
+  new AppError(
+    `Your token has expired! Please login again, Error: ${err.message}`,
+    401
+  );
 
-//For Development Err
+//For Development Errors
 const sendErrDev = (err, res) => {
   res.status(err.statusCode).json({
     status: err.status,
@@ -30,7 +37,7 @@ const sendErrDev = (err, res) => {
   });
 };
 
-//For producation Err
+//For producation Errors
 const sendErrPrd = (err, res) => {
   //Operational, trusted error: send message to client
   if (err.isOperational) {
@@ -55,15 +62,20 @@ module.exports = (err, req, res, next) => {
   if (process.env.NODE_ENV === 'development') {
     sendErrDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
+    console.log('err', err)
     let error = { ...err };
+    console.log('error', error)
     if (error.kind === 'ObjectId') error = handleCastErrorDB(error);
     if (error.code === 11000) error = handleDuplicateFieldsDB(error);
     if (
       error._message === 'Validation failed' ||
-      error.message === 'Tour validation failed'
+      error.message === 'Tour validation failed' ||
+      error._message === 'User validation failed'
     )
       error = handleValidationError(error);
-    if (error.name === 'JsonWebTokenError') err = hendleJWTerror(err);
+    if (error.name === 'JsonWebTokenError') error = hendleJWTerror(error);
+    if (error.name === 'TokenExpiredError')
+      error = hendleJWTexpiredError(error);
 
     sendErrPrd(error, res);
   }
