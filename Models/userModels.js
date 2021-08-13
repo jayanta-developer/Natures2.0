@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
@@ -40,14 +41,17 @@ const userSchema = new mongoose.Schema({
     default: 'user',
     enum: {
       values: ['user', 'guide', 'admin', 'lead-guide'],
-      message: 'A user role must be in betwen (user, guide, lead-guide, admin)'
-    } 
-  }
+      message: 'A user role must be in betwen (user, guide, lead-guide, admin)',
+    },
+  },
+  passwordResetToken: String,
+  passwordTokenExpires: Date,
 });
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   this.password = await bcrypt.hash(this.password, 12);
+  this.passwordConfarmation = undefined;
 });
 
 userSchema.methods.correctPassword = async function (
@@ -60,10 +64,28 @@ userSchema.methods.correctPassword = async function (
 
 userSchema.methods.AfterchangesPassword = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
-    const changeTimeStamp = parseInt(this.passwordChangedAt.getTime() / 1000, 10);
+    const changeTimeStamp = parseInt(
+      this.passwordChangedAt.getTime() / 1000,
+      10
+    );
     return JWTTimestamp < changeTimeStamp;
   }
   return false;
+};
+
+userSchema.methods.CreateResetPasswordToken = function () {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  this.passwordResetToken = crypto
+    .createHash('sha256')
+    .update(resetToken)
+    .digest('hex');
+
+  console.log({resetToken}, this.passwordResetToken);
+
+  this.passwordTokenExpires = Date.now() + 10 * 60 * 1000;
+
+  return resetToken;
 };
 
 const User = mongoose.model('User', userSchema);

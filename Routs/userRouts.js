@@ -4,10 +4,13 @@ const router = express.Router();
 const userController = require('./../Controller/userController');
 
 //SignUP
-router.post('/signup', userController.signup)
+router.post('/signup', userController.signup);
 
 //Login
-router.post('/login', userController.login)
+router.post('/login', userController.login);
+//forgot Password
+router.post('/forgotPassword', userController.forgotPassword);
+router.patch('/resetPassword/:token', userController.resetPassword);
 
 //user route
 router
