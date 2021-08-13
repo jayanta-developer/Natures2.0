@@ -5,6 +5,7 @@ const AppError = require('../Utils/appError');
 const sendEmail = require('../Utils/email');
 const catchAsync = require('../Utils/catchAsync');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 //JWT Token
 const signToken = (id) => {
@@ -41,7 +42,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
   const user = await User.findOne({ email }).select('+password');
   if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new AppError('User or password is incoract', 401));
+    return next(new AppError('User email or password is incoract', 401));
   }
   const token = signToken(user._id);
   res.status(200).json({
@@ -73,6 +74,7 @@ exports.deleteUser = (req, res) => {
   });
 };
 
+//Protect Route
 exports.protectRoute = catchAsync(async (req, res, next) => {
   //1)check for token is exiset
   let token;
@@ -114,12 +116,17 @@ exports.protectRoute = catchAsync(async (req, res, next) => {
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
+    console.log('0 from rest');
+    console.log('The role', roles.includes(req.user.role));
+
     if (!roles.includes(req.user.role)) {
+      console.log('1 from rest');
+
       return next(
         new AppError('You do not have permission to perform this action!', 403)
       );
     }
-
+    console.log('The role', roles.includes(req.user.role));
     next();
   };
 };
@@ -168,4 +175,34 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.resetPassword = catchAsync(async (req, res, next) => {});
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  //creact hash token by the normel token.
+  const hashToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+  //find the user base on the token.
+  const user = await User.findOne({
+    passwordResetToken: hashToken,
+    passwordTokenExpires: { $gt: Date.now() },
+  });
+
+  //If token not expired and user is there then set the new password.
+  if (!user) {
+    return next(new AppError('Token is invalid or has expired', 400));
+  }
+  //Update changepasswordAt property for the users
+  user.password = req.body.password;
+  user.passwordConfarmation = req.body.passwordConfarmation;
+  user.passwordResetToken = undefined;
+  user.passwordTokenExpires = undefined;
+  await user.save();
+  //Log the user in and send JWT
+  const token = signToken(user._id);
+  console.log(token);
+  res.status(200).json({
+    status: 'success',
+    token,
+    data: user,
+  });
+});
