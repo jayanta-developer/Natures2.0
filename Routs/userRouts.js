@@ -20,13 +20,11 @@ router.patch(
 //user route
 router
   .route('/')
-  .get(
-    AuthController.protectRoute,
-    AuthController.restrictTo('admin', 'lead-guide'),
-    userController.getUser
-  );
+  .get(userController.getUser);
+  // .get(AuthController.protectRoute, AuthController.restrictTo('admin', 'lead-guide'), userController.getUser);
 
 router.patch('/updateMe', AuthController.protectRoute, userController.updateMe);
+router.delete('/deleteMe', AuthController.protectRoute, userController.deleteMe)
 
 // Get User by ID
 router
@@ -37,10 +35,10 @@ router
     userController.getUserById
   )
   // .patch(AuthController.protectRoute, userController.updateUser)
-  .delete(
-    AuthController.protectRoute,
-    AuthController.restrictTo('admin', 'lead-guide'),
-    userController.deleteUser
-  );
+  // .delete(
+  //   AuthController.protectRoute,
+  //   AuthController.restrictTo('admin', 'lead-guide'),
+  //   userController.deleteUser
+  // );
 
 module.exports = router;
