@@ -3,24 +3,24 @@ const express = require('express');
 const router = express.Router();
 const userController = require('./../Controller/userController');
 
-//SignUP
+// User SignUP
 router.post('/signup', userController.signup);
-//Login
 router.post('/login', userController.login);
 
 //forgot Password
 router.post('/forgotPassword', userController.forgotPassword);
 router.patch('/resetPassword/:token', userController.resetPassword);
+router.patch('/updatePassword', userController.protectRoute, userController.updatePassword)
 
 //user route
 router
   .route('/')
   .get(userController.protectRoute, userController.restrictTo('admin', 'lead-guide'), userController.getUser)
 
-// .post(userController.createUser);
+// Get User by ID
 router
   .route('/:id')
-  .get(userController.restrictTo('admin', 'lead-guide'), userController.getUser)
+  .get(userController.protectRoute, userController.restrictTo('admin', 'lead-guide'), userController.getUserById)
   .patch(userController.protectRoute, userController.updateUser)
   .delete(userController.protectRoute, userController.restrictTo('admin', 'lead-guide'), userController.deleteUser);
 

@@ -14,23 +14,26 @@ const signToken = (id) => {
   });
 };
 
-exports.getAllUsers = (req, res) => {
-  res.status(500).json({
-    status: 'err',
-    message: 'This rout is not yet defined',
-  });
-};
-//Create User
-exports.signup = catchAsync(async (req, res) => {
-  // const { name, email, password, passwordConfarmation } = req.body;
-  const user = await User.create(req.body);
-
+const creactSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
-  res.status(201).json({
+  res.status(statusCode).json({
     status: 'success',
     token,
     data: user,
   });
+};
+
+// exports.getAllUsers = (req, res) => {
+//   res.status(500).json({
+//     status: 'err',
+//     message: 'This rout is not yet defined',
+//   });
+// };
+//Create User
+exports.signup = catchAsync(async (req, res) => {
+  // const { name, email, password, passwordConfarmation } = req.body;
+  const user = await User.create(req.body);
+  creactSendToken(user, 201, res);
 });
 
 //Login User
@@ -44,21 +47,19 @@ exports.login = catchAsync(async (req, res, next) => {
   if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError('User email or password is incoract', 401));
   }
-  const token = signToken(user._id);
-  res.status(200).json({
-    status: 'success',
-    token,
-    data: user,
-  });
+  creactSendToken(user, 200, res);
 });
 
 exports.getUser = catchAsync(async (req, res) => {
   const user = await User.find();
-  res.status(200).json({
-    status: 'success',
-    data: user,
-  });
+  creactSendToken(user, 200, res);
 });
+
+exports.getUserById = catchAsync(async(req, res, next)=>{
+  const user = await User.findById(req.params.id);
+  console.log(user)
+  creactSendToken(user, 200, res);  
+})
 
 exports.updateUser = (req, res) => {
   res.status(500).json({
@@ -116,17 +117,11 @@ exports.protectRoute = catchAsync(async (req, res, next) => {
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
-    console.log('0 from rest');
-    console.log('The role', roles.includes(req.user.role));
-
     if (!roles.includes(req.user.role)) {
-      console.log('1 from rest');
-
       return next(
         new AppError('You do not have permission to perform this action!', 403)
       );
     }
-    console.log('The role', roles.includes(req.user.role));
     next();
   };
 };
@@ -156,11 +151,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       subject: 'Your password reset token (valid for 10 min)',
       message,
     });
-
-    res.status(200).json({
-      status: 'success',
-      message: 'Token is send to the user!',
-    });
+    creactSendToken(user, 200, res);
   } catch (err) {
     user.passwordResetToken = undefined;
     user.passwordTokenExpires = undefined;
@@ -197,12 +188,30 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordResetToken = undefined;
   user.passwordTokenExpires = undefined;
   await user.save();
+
   //Log the user in and send JWT
-  const token = signToken(user._id);
-  console.log(token);
-  res.status(200).json({
-    status: 'success',
-    token,
-    data: user,
-  });
+  creactSendToken(user, 200, res);
+});
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  //1) check the user is exiset
+  const user = await User.findById(req.user.id).select('+password');
+  if (!user) next(new AppError('There is no user, plase logd in again', 404));
+
+  //2)check the password is correct
+  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+    return next(
+      new AppError(
+        'Your current Password is wrong, Please entre your old password again',
+        401
+      )
+    );
+  }
+
+  //3)update the password
+  user.password = req.body.password;
+  user.passwordConfarmation = req.body.passwordConfarmation;
+  await user.save();
+  //4)log the user in
+  creactSendToken(user, 200, res);
 });
