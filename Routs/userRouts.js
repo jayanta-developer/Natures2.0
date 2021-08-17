@@ -5,8 +5,8 @@ const userController = require('./../Controller/userController');
 const AuthController = require('./../Controller/AuthController');
 
 // User SignUP
-router.post('/signup', userController.signup);
-router.post('/login', userController.login);
+router.post('/signup', AuthController.signup);
+router.post('/login', AuthController.login);
 
 //forgot Password
 router.post('/forgotPassword', AuthController.forgotPassword);

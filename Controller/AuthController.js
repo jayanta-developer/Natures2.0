@@ -1,27 +1,11 @@
 const User = require('../Models/userModels');
 const sendEmail = require('../Utils/email');
+const creactSendToken = require('../Utils/token');
 const crypto = require('crypto');
 const catchAsync = require('../Utils/catchAsync');
 const AppError = require('../Utils/appError');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
-
-//JWT Token
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET_TOKEN, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
-};
-
-//Send respons with token
-const creactSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id);
-  res.status(statusCode).json({
-    status: 'success',
-    token,
-    data: user,
-  });
-};
 
 //Protect Route
 exports.protectRoute = catchAsync(async (req, res, next) => {
@@ -73,6 +57,27 @@ exports.restrictTo = (...roles) => {
     next();
   };
 };
+
+//Create User
+exports.signup = catchAsync(async (req, res) => {
+  // const { name, email, password, passwordConfarmation } = req.body;
+  const user = await User.create(req.body);
+  creactSendToken(user, 201, res);
+});
+
+//Login User
+exports.login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return next(new AppError('Email or Password is not provide', 400));
+  }
+  const user = await User.findOne({ email }).select('+password');
+  if (!user || !(await user.correctPassword(password, user.password))) {
+    return next(new AppError('User email or password is incoract', 401));
+  }
+  creactSendToken(user, 200, res);
+});
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   //check the user email is exists.
