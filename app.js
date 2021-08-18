@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 
 //Error handling constrictor
 const AppError = require('./Utils/appError');
@@ -14,13 +15,21 @@ if (process.env.NODE_ENV === 'development') {
   console.log('production');
 }
 
+app.use(
+  '/api',
+  rateLimit({
+    max: 100,
+    windowMs: 60 * 60 * 1000,
+    message: 'To many request from that ip plese try in a hour'
+  })
+);
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
 //Middelwer
-app.use((req, res, next)=>{
-  next()
-})
+app.use((req, res, next) => {
+  next();
+});
 
 //Define the routers
 const TourRouter = require('./Routs/tourRouts');

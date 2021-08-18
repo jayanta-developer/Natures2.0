@@ -1,8 +1,7 @@
 const User = require('../Models/userModels');
 const AppError = require('../Utils/appError');
 const catchAsync = require('../Utils/catchAsync');
-const signToken = require('../Utils/token');
-
+const creactSendToken = require('../Utils/token');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -11,17 +10,6 @@ const filterObj = (obj, ...allowedFields) => {
   });
   return newObj;
 };
-
-//Send respons with token
-const creactSendToken = (user, statusCode, res) => {
-  const token = signToken(user._id);
-  res.status(statusCode).json({
-    status: 'success',
-    token,
-    data: user,
-  });
-};
-
 
 exports.getUser = catchAsync(async (req, res, next) => {
   const user = await User.find();

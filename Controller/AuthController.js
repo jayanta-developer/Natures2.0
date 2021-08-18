@@ -62,6 +62,7 @@ exports.restrictTo = (...roles) => {
 exports.signup = catchAsync(async (req, res) => {
   // const { name, email, password, passwordConfarmation } = req.body;
   const user = await User.create(req.body);
+  // user.password = undefined;
   creactSendToken(user, 201, res);
 });
 
