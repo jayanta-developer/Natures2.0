@@ -15,12 +15,13 @@ if (process.env.NODE_ENV === 'development') {
   console.log('production');
 }
 
+//This is the rate limit function.
 app.use(
   '/api',
   rateLimit({
     max: 100,
     windowMs: 60 * 60 * 1000,
-    message: 'To many request from that ip plese try in a hour'
+    message: 'Too many request from that ip plese try again in a hour'
   })
 );
 app.use(express.json());
