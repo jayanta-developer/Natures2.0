@@ -1,4 +1,5 @@
 const express = require('express');
+const helmet = require('helmet');
 const app = express();
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
@@ -7,7 +8,10 @@ const rateLimit = require('express-rate-limit');
 const AppError = require('./Utils/appError');
 const globalErrorHandler = require('./Controller/ErrorController');
 
-//Middleware
+//set security HTTP headers
+app.use(helmet());
+
+//Middleware Producation loggo
 if (process.env.NODE_ENV === 'development') {
   console.log(process.env.NODE_ENV);
   app.use(morgan('dev'));
@@ -21,10 +25,12 @@ app.use(
   rateLimit({
     max: 100,
     windowMs: 60 * 60 * 1000,
-    message: 'Too many request from that ip plese try again in a hour'
+    message: 'Too many request from that ip plese try again in a hour',
   })
 );
-app.use(express.json());
+//Body parser. reading data from body into req.body
+app.use(express.json({ limit: '10kb' }));
+//Serveing the static the files
 app.use(express.static(`${__dirname}/public`));
 
 //Middelwer
