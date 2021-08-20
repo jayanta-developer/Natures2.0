@@ -2,7 +2,10 @@ const express = require('express');
 const helmet = require('helmet');
 const app = express();
 const morgan = require('morgan');
+const hpp = require('hpp');
 const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 
 //Error handling constrictor
 const AppError = require('./Utils/appError');
@@ -30,6 +33,27 @@ app.use(
 );
 //Body parser. reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
+
+//Data sanitize for NoSQL quire
+app.use(mongoSanitize());
+
+//Data sanitize for xss
+app.use(xss());
+
+// HTTP paramitar poliotion
+app.use(
+  hpp({
+    whitelist: [
+      'duration',
+      'ratingAverage',
+      'ratingQuantity',
+      'maxGroupSize',
+      'medium',
+      'price',
+    ],
+  })
+);
+
 //Serveing the static the files
 app.use(express.static(`${__dirname}/public`));
 
