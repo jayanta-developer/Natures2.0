@@ -4,7 +4,6 @@ const APIFeatures = require('./../Utils/apiFeatures');
 const catchAsync = require('./../Utils/catchAsync');
 const AppError = require('./../Utils/appError');
 
-
 //Delet all tours data
 // exports.deletAllTours = catchAsync(async (req, res, next)=> {
 //  const deleteData = await Tour.deleteMany()
@@ -33,7 +32,7 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 });
 
 exports.getTourById = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id).populate('guides');
+  const tour = await Tour.findById(req.params.id)
   if (!tour) {
     return next(
       new AppError(`No tour found with that ID ${req.params.id}`, 404)
