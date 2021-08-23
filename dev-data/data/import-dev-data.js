@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const fs = require('fs');
-const Tour = require('../../Models/TourModels');
+// const Tour = require('../../Models/TourModels');
+const Tour = require('../../Models/TourModels')
 
 dotenv.config({ path: './config.env' });
 
@@ -16,11 +17,12 @@ mongoose
     useCreateIndex: true,
     useFindAndModify: false,
   })
-  .then(() => console.log('Database conacted successful!'));
+  .then(() => console.log('Database conacted successful!'))
+  .catch(err => console.log(err))
 
 //read json file
 const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/tours-simple.json`, `utf-8`)
+  fs.readFileSync(`${__dirname}/tours.json`, `utf-8`)
 );
 
 //import dada to database
@@ -28,8 +30,8 @@ const importData = async () => {
   try {
     await Tour.create(tours);
     console.log('Data successfully loaded!');
-  } catch (err) {
-    console.log(err);
+  } catch(err){
+    console.log(err)
   }
   process.exit();
 };
@@ -40,7 +42,7 @@ const deleteData = async () => {
     await Tour.deleteMany();
     console.log('Data successfully deleted!');
   } catch (err) {
-    console.log(err);
+    console.log('this is the err',err);
   }
   process.exit();
 };

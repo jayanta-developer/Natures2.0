@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+// const User = require('../Models/userModels');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -60,6 +61,38 @@ const tourSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+
+    startLocation: {
+      type: {
+        type: String,
+        default: 'Point',
+        enum: ['Point'],
+      },
+      coordinates: [Number],
+      address: String,
+      desription: String,
+    },
+
+    location: [
+      {
+        type: {
+          type: String,
+          default: 'Point',
+          enum: ['Point'],
+        },
+        coordinates: [Number],
+        address: String,
+        description: String,
+        day: Number,
+      },
+    ],
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
+
     imageCover: {
       type: String,
       required: [true, 'A tour must have cover photo'],
@@ -89,10 +122,17 @@ tourSchema.virtual('durationWeek').get(function () {
 
 //Doucament Middelwear.
 // this is run before seve() creact() funcation.
-tourSchema.pre('save', function (next) {
-  // console.log('this is run before seve the data in DB');
-  next();
-});
+// tourSchema.pre('save', function (next) {
+// console.log('this is run before seve the data in DB');
+// next();
+// });
+
+//Asayan guide
+// tourSchema.pre('save', async function (next) {
+//   const guidesPromise = this.guides.map(async (id) => await User.findById(id));
+//   this.guides = await Promise.all(guidesPromise);
+//   next();
+// });
 
 //Query Middelwear.
 
