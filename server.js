@@ -2,10 +2,10 @@
 const dotenv = require('dotenv');
 
 //Unhandle Exception
-process.on('uncaughtException', err =>{
-  console.log('UNHANDLED EXCEPTION! I am Shuttion down...')
-  console.log(err.name, err.message);
-})
+// process.on('uncaughtException', err =>{
+//   console.log('UNHANDLED EXCEPTION! I am Shuttion down...')
+//   console.log(err.name, err.message);
+// })
 
 dotenv.config({ path: './config.env' });
 const app = require('./app');

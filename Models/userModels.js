@@ -34,7 +34,10 @@ const userSchema = new mongoose.Schema({
     },
   },
   photo: String,
-  passwordChangedAt: Date,
+  passwordChangedAt: {
+    type: Date,
+    select: false,
+  },
 
   role: {
     type: String,
@@ -46,7 +49,7 @@ const userSchema = new mongoose.Schema({
   },
   passwordResetToken: String,
   passwordTokenExpires: Date,
-  
+
   Active: {
     type: Boolean,
     default: true,

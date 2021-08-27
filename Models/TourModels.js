@@ -120,6 +120,13 @@ tourSchema.virtual('durationWeek').get(function () {
   return this.duration / 7;
 });
 
+// Virtule Populate..
+tourSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
+});
+
 //Doucament Middelwear.
 // this is run before seve() creact() funcation.
 // tourSchema.pre('save', function (next) {
@@ -137,19 +144,15 @@ tourSchema.virtual('durationWeek').get(function () {
 //Query Middelwear.
 
 tourSchema.pre(/^find/, function (next) {
-  //This kaind of find expreson use for all find mathode
-  this.findOne({ secretTour: { $ne: true } });
-  next();
-});
-
-tourSchema.pre(/^find/, function (next) {
+  //guides populate function
   this.populate({
     path: 'guides',
     select: '-__v -passwordChangedAt',
   });
+  //This kaind of find expreson use for all find mathode
+  this.findOne({ secretTour: { $ne: true } });
   next();
 });
-
 //Aggregation Middelwear
 tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });

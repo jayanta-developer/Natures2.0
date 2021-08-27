@@ -65,10 +65,12 @@ app.use((req, res, next) => {
 //Define the routers
 const TourRouter = require('./Routs/tourRouts');
 const UserRouter = require('./Routs/userRouts');
+const ReviewRouter = require('./Routs/reviewRoutes');
 
 //Router Mounting
 app.use('/api/v1/tours', TourRouter);
 app.use('/api/v1/users', UserRouter);
+app.use('/api/v1/review', ReviewRouter)
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));

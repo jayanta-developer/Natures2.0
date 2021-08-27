@@ -27,6 +27,7 @@ module.exports = creactSendToken = (user, statusCode, res) => {
   res.status(statusCode).json({
     status: 'success',
     token,
+    result:[`We have ${user.length} users.`],
     data: user,
   });
 };
