@@ -120,7 +120,7 @@ tourSchema.virtual('durationWeek').get(function () {
   return this.duration / 7;
 });
 
-// Virtule Populate..
+// Virtule populate
 tourSchema.virtual('reviews', {
   ref: 'Review',
   foreignField: 'tour',
