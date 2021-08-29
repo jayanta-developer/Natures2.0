@@ -1,7 +1,7 @@
 const express = require('express');
 const tourController = require('./../Controller/tourController');
 const AuthController = require('../Controller/AuthController');
-const reviewController = require('../Controller/reviewController');
+const ReviewRouter = require('../Routs/reviewRoutes');
 const { route } = require('./userRouts');
 //Rout
 const router = express.Router();
@@ -10,6 +10,8 @@ const router = express.Router();
 //Delete all tour data
 // router.route('/delTours').get(tourController.deletAllTours)
 
+//Nested route
+router.use('/:tourId/reviews', ReviewRouter)
 
 //tour route
 router
@@ -26,8 +28,7 @@ router
 .patch(AuthController.protectRoute, AuthController.restrictTo('admin', 'lead-guide'), tourController.updateTour)
 .delete(AuthController.protectRoute, AuthController.restrictTo('admin', 'lead-guide'), tourController.deleteTour);
 
-router
-.route('/:tourId/reviews')
-.post(AuthController.protectRoute, AuthController.restrictTo('user'), reviewController.createReview);
+
+
 
 module.exports = router;
