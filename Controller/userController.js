@@ -2,6 +2,7 @@ const User = require('../Models/userModels');
 const AppError = require('../Utils/appError');
 const catchAsync = require('../Utils/catchAsync');
 const creactSendToken = require('../Utils/token');
+const fectory = require('./fectoryHandeler');
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -56,3 +57,7 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
     data: null,
   });
 });
+
+//delete by Id
+exports.deleteByID = fectory.deleteDos(User);
+

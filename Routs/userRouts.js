@@ -29,16 +29,8 @@ router.delete('/deleteMe', AuthController.protectRoute, userController.deleteMe)
 // Get User by ID
 router
   .route('/:id')
-  .get(
-    AuthController.protectRoute,
-    AuthController.restrictTo('admin', 'lead-guide'),
-    userController.getUserById
-  )
+  .get(AuthController.protectRoute, AuthController.restrictTo('admin', 'lead-guide'), userController.getUserById)
   // .patch(AuthController.protectRoute, userController.updateUser)
-  // .delete(
-  //   AuthController.protectRoute,
-  //   AuthController.restrictTo('admin', 'lead-guide'),
-  //   userController.deleteUser
-  // );
+  .delete(AuthController.protectRoute, AuthController.restrictTo('admin', 'lead-guide', 'user'), userController.deleteByID);
 
 module.exports = router;

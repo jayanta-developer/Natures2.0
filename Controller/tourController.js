@@ -3,6 +3,8 @@ const Tour = require('./../Models/TourModels');
 const APIFeatures = require('./../Utils/apiFeatures');
 const catchAsync = require('./../Utils/catchAsync');
 const AppError = require('./../Utils/appError');
+const fectory = require('./fectoryHandeler');
+
 
 //Tour handler.
 //Make catchAsync fun for handle error in one function.
@@ -60,20 +62,22 @@ exports.updateTour = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndDelete(req.params.id);
+exports.deleteTour = fectory.deleteDos(Tour);
 
-  if (!tour) {
-    return next(
-      new AppError(`No tour found with that ID ${req.params.id}`, 404)
-    );
-  }
+// exports.deleteTour = catchAsync(async (req, res, next) => {
+//   const tour = await Tour.findByIdAndDelete(req.params.id);
 
-  res.status(204).json({
-    status: 'success',
-    data: null,
-  });
-});
+//   if (!tour) {
+//     return next(
+//       new AppError(`No tour found with that ID ${req.params.id}`, 404)
+//     );
+//   }
+
+//   res.status(204).json({
+//     status: 'success',
+//     data: null,
+//   });
+// });
 
 //Aggregate
 //for Grouping file
