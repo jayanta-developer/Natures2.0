@@ -39,7 +39,6 @@ app.use(mongoSanitize());
 
 //Data sanitize for xss
 app.use(xss());
-
 // HTTP paramitar poliotion
 app.use(
   hpp({
