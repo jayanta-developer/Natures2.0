@@ -11,7 +11,7 @@ const router = express.Router();
 // router.route('/delTours').get(tourController.deletAllTours)
 
 //Nested route
-router.use('/:tourId/reviews', ReviewRouter)
+router.use('/:tourId/review', ReviewRouter)
 
 //tour route
 router

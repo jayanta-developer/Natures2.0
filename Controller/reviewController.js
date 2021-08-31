@@ -1,5 +1,6 @@
 const Review = require('../Models/reviewModels');
 const catchAsync = require('../Utils/catchAsync');
+const fectory = require('./fectoryHandeler');
 
 exports.getAllReview = catchAsync(async (req, res, next) => {
   let filter = {};
@@ -30,3 +31,6 @@ exports.createReview = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+//delete review by id
+exports.deleteReview = fectory.deleteDos(Review);
