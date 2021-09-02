@@ -18,8 +18,7 @@ module.exports = creactSendToken = (user, statusCode, res) => {
 
   if (process.env.NODE_ENV === 'production') {
     cookieOption.secure = true;
-  } else {
-    // res.cookie('jwt', token, cookieOptions);
+  } else {    
     res.cookie('jwt', token, cookieOptions);
   }
 

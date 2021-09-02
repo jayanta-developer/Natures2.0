@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
-// const User = require('../Models/userModels');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -142,7 +141,6 @@ tourSchema.virtual('reviews', {
 // });
 
 //Query Middelwear.
-
 tourSchema.pre(/^find/, function (next) {
   //guides populate function
   this.populate({
@@ -153,6 +151,7 @@ tourSchema.pre(/^find/, function (next) {
   this.findOne({ secretTour: { $ne: true } });
   next();
 });
+
 //Aggregation Middelwear
 tourSchema.pre('aggregate', function (next) {
   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
@@ -160,5 +159,4 @@ tourSchema.pre('aggregate', function (next) {
 });
 
 const Tour = mongoose.model('Tour', tourSchema);
-
 module.exports = Tour;

@@ -1,67 +1,20 @@
 const fs = require('fs');
 const Tour = require('./../Models/TourModels');
-const APIFeatures = require('./../Utils/apiFeatures');
 const catchAsync = require('./../Utils/catchAsync');
-const AppError = require('./../Utils/appError');
 const fectory = require('./fectoryHandeler');
 
 
 //Tour handler.
-//Make catchAsync fun for handle error in one function.
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  //Execute query
-  const features = new APIFeatures(Tour.find(), req.query)
-    .filter()
-    .sort()
-    .limitFields()
-    .paginate();
-  const tours = await features.query;
 
-  res.status(200).json({
-    status: 'success',
-    results: [`We have(${tours.length}) tours.`],
-    data: {
-      tours,
-    },
-  });
-});
-
-exports.getTourById = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findById(req.params.id).populate('reviews')
-  if (!tour) {
-    return next(
-      new AppError(`No tour found with that ID ${req.params.id}`, 404)
-    );
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: { tour },
-  });
-});
-
-exports.creatTour = catchAsync(async (req, res, next) => {
-  const newTour = await Tour.create(req.body);
-
-  res.status(201).json({
-    status: 'success',
-    data: {
-      tour: newTour,
-    },
-  });
-});
-
-exports.updateTour = catchAsync(async (req, res, next) => {
-  const updateTour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
-  res.status(200).json({
-    status: 'success',
-    data: updateTour,
-  });
-});
-
+//Get All tours
+exports.getAllTours = fectory.getAllDoc(Tour);
+//Get tour by id
+exports.getTourById = fectory.getOneDoc(Tour, { path: 'reviews' });
+//Creact Tour
+exports.creatTour = fectory.createDos(Tour);
+//update Tour
+exports.updateTour = fectory.updateDoc(Tour);
+//delete tour
 exports.deleteTour = fectory.deleteDos(Tour);
 
 //Aggregate
