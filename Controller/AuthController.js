@@ -47,21 +47,21 @@ exports.protectRoute = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.restrictTo = (...roles) => {
+exports.restrictTo = (...roles) => {  
   return (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
+    if (!roles.includes(req.user.role)){
       return next(
         new AppError('You do not have permission to perform this action!', 403)
       );
-    }
+    }  
     next();
   };
 };
 
 //Create User
 exports.signup = catchAsync(async (req, res) => {
-  // const { name, email, password, passwordConfarmation } = req.body;
-  const user = await User.create(req.body);
+  const { name, email, password, passwordConfarmation, role } = req.body;
+  const user = await User.create({ name, email, password, passwordConfarmation, role });
   // user.password = undefined;
   creactSendToken(user, 201, res);
 });

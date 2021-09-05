@@ -19,13 +19,13 @@ router
 .get(tourController.getAllTours)
 .post(AuthController.restrictTo('admin', 'lead-guide'), tourController.creatTour)
 
-router.route('/tour-stats').get( AuthController.restrictTo('admin', 'lead-guide'), tourController.getTourStats);
-router.route('/monthly-plan/:year').get(AuthController.restrictTo('admin', 'lead-guide'), tourController.getMonthlyPlan);
+router.route('/tour-stats').get(AuthController.restrictTo('admin', 'lead-guide'), tourController.getTourStats);
+router.route('/monthly-plan/:year').get(AuthController.restrictTo('admin', 'lead-guide'), tourController.getMonthlyPlan)
 
 router
 .route('/:id')
 .get(tourController.getTourById)
-.patch(AuthController.restrictTo('admin', 'lead-guide'), tourController.updateTour)
-.delete(AuthController.restrictTo('admin', 'lead-guide'), tourController.deleteTour);
+.delete(AuthController.restrictTo('admin', 'lead-guide'), tourController.deleteTour)
+.patch(AuthController.restrictTo('admin', 'lead-guied'), tourController.updateTour)
 
 module.exports = router;

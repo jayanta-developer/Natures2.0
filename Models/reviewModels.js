@@ -11,7 +11,7 @@ const reviewShema = new mongoose.Schema(
       type: Number,
       min: 1,
       max: 5,
-      required: [true, "Plese give a rating"]
+      required: [true, 'Plese give a rating'],
     },
     createdAt: {
       type: Date,
@@ -36,24 +36,32 @@ const reviewShema = new mongoose.Schema(
   }
 );
 
-// reviewShema.pre(/^find/, function (next) {
-//   this.populate({
-//     path: 'tour',
-//     select:
-//       '-id -guides -startLocation -ratingAverage -ratingQuantity -images -secretTour -startDates -duration -maxGroupSize -price -summary -description -imageCover -location -__v -difficulty -durationWeek',
-//   }).populate({
-//     path: 'author',
-//     select: 'name photo',
-//   });
-//   next();
-// });
-
-reviewShema.pre(/^find/, function(next){
+reviewShema.pre(/^find/, function (next) {
   this.populate({
     path: 'author',
-    select: 'name photo'
+    select: 'name photo',
   });
   next();
+});
+
+reviewShema.static.calcAverageRatings = async function (tourId) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      $group: {
+        _id: '$tour',
+        nRating: { $sun: 1 },
+        avgRating: { $avg: '$rating' },
+      },
+    },
+  ]);
+  console.log(stats)
+};
+
+reviewShema.post('save', function() {
+  this.constructor.calcAverageRatings(this.tour)
 })
 
 const Review = mongoose.model('Review', reviewShema);
