@@ -27,7 +27,7 @@ mongoose
   // .catch((err) => console.log('somthing is wrong DB is not conocted', err));
 
 //Run the server in port 2000
-const port = process.env.PORT || 3002;
+const port = process.env.PORT;
 const server = app.listen(port, () => {
   console.log(`App running on port ${port}...`);
 });

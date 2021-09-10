@@ -17,7 +17,9 @@ router.use('/:tourId/review', ReviewRouter)
 router
 .route('/')
 .get(tourController.getAllTours)
-.post(AuthController.restrictTo('admin', 'lead-guide'), tourController.creatTour)
+.post(AuthController.protectRoute, AuthController.restrictTo('admin', 'lead-guide'), tourController.creatTour)
+
+router.use(AuthController.protectRoute);
 
 router.route('/tour-stats').get(AuthController.restrictTo('admin', 'lead-guide'), tourController.getTourStats);
 router.route('/monthly-plan/:year').get(AuthController.restrictTo('admin', 'lead-guide'), tourController.getMonthlyPlan)
