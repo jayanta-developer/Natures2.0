@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-// const Tour = require('./TourModels');
+const Tour = require('./TourModels');
 
 const reviewShema = new mongoose.Schema(
   {
@@ -44,7 +44,8 @@ reviewShema.pre(/^find/, function (next) {
   next();
 });
 
-reviewShema.static.calcAverageRatings = async function (tourId) {
+//calculat reting avarage when crate a review
+reviewShema.statics.calcAverageRatings = async function (tourId) {
   const stats = await this.aggregate([
     {
       $match: { tour: tourId },
@@ -52,17 +53,37 @@ reviewShema.static.calcAverageRatings = async function (tourId) {
     {
       $group: {
         _id: '$tour',
-        nRating: { $sun: 1 },
+        nRating: { $sum: 1 },
         avgRating: { $avg: '$rating' },
       },
     },
   ]);
-  console.log(stats)
+  if (stats.length > 0) {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingQuantity: stats[0].nRating,
+      ratingAverage: stats[0].avgRating,
+    });
+  } else {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingQuantity: 0,
+      ratingAverage: 4.5,
+    });
+  }
 };
 
-reviewShema.post('save', function() {
-  this.constructor.calcAverageRatings(this.tour)
-})
+reviewShema.post('save', function () {
+  this.constructor.calcAverageRatings(this.tour);
+});
+
+//Update and delete
+reviewShema.pre(/^findOneAnd/, async function (next) {
+  this.r = await this.findOne();
+  console.log(this.r);
+  next();
+});
+reviewShema.post(/^findOneAnd/, async function () {
+  await this.r.constructor.calcAverageRatings(this.r.tour);
+});
 
 const Review = mongoose.model('Review', reviewShema);
 module.exports = Review;

@@ -20,7 +20,7 @@ router.use(AuthController.protectRoute)
 
 //get me
 router
-.route('/me')
+.route('/getMe')
 .get(userController.getMe, userController.getUserById)
 
 router.patch('/updateMe', userController.updateMe);

@@ -71,7 +71,7 @@ const tourSchema = new mongoose.Schema(
       address: String,
       desription: String,
     },
-    
+
     location: [
       {
         type: {
@@ -115,7 +115,7 @@ const tourSchema = new mongoose.Schema(
 );
 
 tourSchema.index({ price: 1, ratingAverage: -1 });
-tourSchema.index({ slug: 1 })
+tourSchema.index({ slug: 1 });
 
 //Virtual Properties, This is show the aditional fild after get the data/ not save in DB
 tourSchema.virtual('durationWeek').get(function () {
