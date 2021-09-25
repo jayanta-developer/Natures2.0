@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const slugify = require('slugify');
 
 const tourSchema = new mongoose.Schema(
   {
@@ -12,6 +13,7 @@ const tourSchema = new mongoose.Schema(
       minlength: [4, 'A tour name nust have more or equal then 4 characters'],
       // validate: [validator.isAlpha, 'Tour name must only contain characters'],
     },
+    slug: String,
     duration: {
       type: Number,
       required: [true, 'A tour must have a duration'],
@@ -33,7 +35,7 @@ const tourSchema = new mongoose.Schema(
       default: 4.7,
       min: [1, 'Reting must be above 1.0'],
       max: [5, 'Reting must be below 5.0'],
-      set: val => Math.round(val * 10) / 10
+      set: (val) => Math.round(val * 10) / 10,
     },
     ratingsQuantity: {
       type: Number,
@@ -70,14 +72,14 @@ const tourSchema = new mongoose.Schema(
       },
       coordinates: [Number],
       address: String,
-      desription: String,
+      description: String,
     },
 
     locations: [
       {
         type: {
           type: String,
-          required:[true, "A tour must have location"],
+          required: [true, 'A tour must have location'],
           default: 'Point',
           enum: ['Point'],
         },
@@ -131,6 +133,11 @@ tourSchema.virtual('reviews', {
   localField: '_id',
 });
 
+tourSchema.pre('save', function (next) {
+  this.slug = slugify(this.name, { lower: true });  
+  next();
+});
+
 //Doucament Middelwear.
 // this is run before seve() creact() funcation.
 // tourSchema.pre('save', function (next) {
@@ -144,7 +151,6 @@ tourSchema.virtual('reviews', {
 //   this.guides = await Promise.all(guidesPromise);
 //   next();
 // });
-
 //Query Middelwear.
 tourSchema.pre(/^find/, function (next) {
   //guides populate function

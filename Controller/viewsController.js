@@ -1,7 +1,9 @@
+const Tours = require('../Models/TourModels');
 
-exports.overview = (req, res) => {
+exports.overview = async (req, res) => {
+  const tours = await Tours.find()  
   res.status(200).render('overview', {
-    title: 'Tours overview',
+    tours
   });
 };
 
