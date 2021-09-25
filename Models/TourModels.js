@@ -28,14 +28,14 @@ const tourSchema = new mongoose.Schema(
         message: 'Defficulty is either: easy, medium, difficult',
       },
     },
-    ratingAverage: {
+    ratingsAverage: {
       type: Number,
       default: 4.7,
       min: [1, 'Reting must be above 1.0'],
       max: [5, 'Reting must be below 5.0'],
       set: val => Math.round(val * 10) / 10
     },
-    ratingQuantity: {
+    ratingsQuantity: {
       type: Number,
       default: 0,
     },
@@ -73,10 +73,11 @@ const tourSchema = new mongoose.Schema(
       desription: String,
     },
 
-    location: [
+    locations: [
       {
         type: {
           type: String,
+          required:[true, "A tour must have location"],
           default: 'Point',
           enum: ['Point'],
         },

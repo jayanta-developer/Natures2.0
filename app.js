@@ -1,6 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const app = express();
+const path = require('path');
 const morgan = require('morgan');
 const hpp = require('hpp');
 const rateLimit = require('express-rate-limit');
@@ -53,8 +54,12 @@ app.use(
   })
 );
 
+//view engen pug
+app.set('view engine', 'pug');
+app.set('views', path.join(__dirname, 'views'));
+
 //Serveing the static the files
-app.use(express.static(`${__dirname}/public`));
+app.use(express.static(path.join(__dirname, 'public')));
 
 //Middelwer
 app.use((req, res, next) => {
@@ -65,11 +70,12 @@ app.use((req, res, next) => {
 const TourRouter = require('./Routs/tourRouts');
 const UserRouter = require('./Routs/userRouts');
 const ReviewRouter = require('./Routs/reviewRoutes');
-
+const ViewRouter = require('./Routs/viewsRouter')
 //Router Mounting
 app.use('/api/v1/tours', TourRouter);
 app.use('/api/v1/users', UserRouter);
-app.use('/api/v1/review', ReviewRouter)
+app.use('/api/v1/review', ReviewRouter);
+app.use('/', ViewRouter)
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server`, 404));

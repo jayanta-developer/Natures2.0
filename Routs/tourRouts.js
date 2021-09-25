@@ -10,6 +10,9 @@ const router = express.Router();
 //Delete all tour data
 // router.route('/delTours').get(tourController.deletAllTours)
 
+// router
+// route('')
+
 //Nested route
 router.use('/:tourId/review', ReviewRouter)
 
