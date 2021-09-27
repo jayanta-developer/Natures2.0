@@ -1,22 +1,24 @@
 doctype html 
 html 
-   head 
-      meta(charset='UTF-8')
-      meat(mane='viewport' content='width=device-width, initial-scale=1.0')
-      title Natours | #{title}
-      link(rel="stylesheet", href="/css/style.css") 
-      link(rel="shortcut icon", type="image/png", href="img/favicon.png")
-      link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Lato:300,300i,700")
+  head 
+    meta(charset='UTF-8')
+    meat(mane='viewport' content='width=device-width, initial-scale=1.0')
+    -let headLine;
+    -title ? headLine = `Natours | ${title}` : headLine = 'Natours'
+    title #{headLine}
+    link(rel="stylesheet", href="/css/style.css") 
+    link(rel="shortcut icon", type="image/png", href="/img/favicon.png")
+    link(rel="stylesheet", href="https://fonts.googleapis.com/css?family=Lato:300,300i,700")
 
-   body 
-      //header
-      include _header
+  body 
+    //header
+    include _header
 
-      //content
-      block content 
-         h1 This is the placeholder text
+    //content
+    block content 
+      h1 This is the placeholder text
 
-   //Footer
-   include _footer
+    //Footer
+    include _footer
 
 
