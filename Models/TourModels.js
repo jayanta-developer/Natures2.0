@@ -141,7 +141,7 @@ tourSchema.pre('save', function (next) {
 //Doucament Middelwear.
 // this is run before seve() creact() funcation.
 // tourSchema.pre('save', function (next) {
-// console.log('this is run before seve the data in DB');
+// ('this is run before seve the data in DB');
 // next();
 // });
 

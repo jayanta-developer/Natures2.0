@@ -4,15 +4,15 @@
   "description": "learning express and mongoDB",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon server.js",
     "start:prod": "NODE_ENV=production nodemon server.js",
+    "start": "nodemon server.js",
     "debug": "ndb server.js"
   },
   "author": "jayanta dey",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "express": "^4.17.1",
     "express-mongo-sanitize": "^2.1.0",
     "express-rate-limit": "^5.3.0",

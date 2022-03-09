@@ -80,7 +80,7 @@ reviewShema.post('save', function () {
 //Update and delete
 reviewShema.pre(/^findOneAnd/, async function (next) {
   this.r = await this.findOne();
-  console.log(this.r);
+  (this.r);
   next();
 });
 reviewShema.post(/^findOneAnd/, async function () {

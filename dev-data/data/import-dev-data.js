@@ -17,8 +17,8 @@ mongoose
     useCreateIndex: true,
     useFindAndModify: false,
   })
-  .then(() => console.log('Database conacted successful!'))
-  .catch(err => console.log(err))
+  .then(() => ('Database conacted successful!'))
+  .catch(err => (err))
 
 //read json file
 const tours = JSON.parse(
@@ -29,9 +29,9 @@ const tours = JSON.parse(
 const importData = async () => {
   try {
     await Tour.create(tours);
-    console.log('Data successfully loaded!');
+    ('Data successfully loaded!');
   } catch(err){
-    console.log(err)
+    (err)
   }
   process.exit();
 };
@@ -40,9 +40,9 @@ const importData = async () => {
 const deleteData = async () => {
   try {
     await Tour.deleteMany();
-    console.log('Data successfully deleted!');
+    ('Data successfully deleted!');
   } catch (err) {
-    console.log('this is the err',err);
+    ('this is the err',err);
   }
   process.exit();
 };
@@ -53,4 +53,4 @@ if (process.argv[2] === '--import') {
   deleteData();
 }
 
-console.log(process.argv);
+(process.argv);
