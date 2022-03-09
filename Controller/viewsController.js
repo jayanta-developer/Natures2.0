@@ -17,8 +17,8 @@ exports.tourDetails = async (req, res)=>{
   const tour = await Tours.findOne({ slug: req.params.slug }).populate({
     path: 'reviews',
     fields: 'review, rating, user'
-  })
-  (tour)
+  });
+  // console.log(tour)
   res.status(200).render('tour',{
     title: tour.name,
     tour
