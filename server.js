@@ -23,12 +23,12 @@ mongoose
     useFindAndModify: false,
     useUnifiedTopology: true,
   })
-  .then(() => console.log('Database is connected successfully!'))
-  // .catch((err) => console.log('somthing is wrong DB is not conocted', err));
+  .then(() => console.log('Database is connected successfully!'));
+// .catch((err) => console.log('somthing is wrong DB is not conocted', err));
 
 //Run the server in port 2000
 const port = process.env.PORT;
-const server = app.listen(port, () => {
+  app.listen(port, () => {
   console.log(`App running on port ${port}...`);
 });
 

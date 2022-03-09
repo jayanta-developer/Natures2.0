@@ -15,7 +15,7 @@ const globalErrorHandler = require('./Controller/ErrorController');
 //set security HTTP headers
 app.use(helmet());
 
-//Middleware Producation loggo
+//Middleware Production logo
 if (process.env.NODE_ENV === 'development') {
   console.log(process.env.NODE_ENV);
   app.use(morgan('dev'));
@@ -29,7 +29,7 @@ app.use(
   rateLimit({
     max: 100,
     windowMs: 60 * 60 * 1000,
-    message: 'Too many request from that ip plese try again in a hour',
+    message: 'Too many request from that ip please try again in a hour',
   })
 );
 //Body parser. reading data from body into req.body
@@ -58,7 +58,7 @@ app.use(
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
-//Serveing the static the files
+//Serving the static the files
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Middelwer
